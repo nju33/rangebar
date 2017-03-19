@@ -49,6 +49,9 @@ new Rangebar({
       20,
       30
     ],
+    onChange(values) {
+      console.log(values.length) // 3, This returns the new value of this.buttons
+    }
   }
 });
 ```
