@@ -1,0 +1,14 @@
+{
+  "name": "example.webpack.rangebar",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-loader": "^6.4.1",
+    "babel-preset-env": "^1.2.2",
+    "webpack": "^2.2.1"
+  },
+  "scripts": {
+    "dev": "webpack -w"
+  }
+}

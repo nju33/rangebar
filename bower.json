@@ -1,0 +1,18 @@
+{
+  "name": "rangebar",
+  "description": "",
+  "main": "dist/rangebar.js",
+  "authors": [
+    "nju33 <nju33.ki@gmail.com>"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/nju33/rangebar#readme",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "lib",
+    "src",
+    "test"
+  ]
+}

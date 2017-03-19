@@ -1,0 +1,94 @@
+{
+  "name": "rangebar",
+  "version": "0.0.0",
+  "description": "💊 Elements like input[type=range]",
+  "main": "dist/rangebar.umd.js",
+  "jsnext:main": "dist/rangebar.es.js",
+  "scripts": {
+    "start": "node dev-server.js",
+    "prepublish": "yarn prod",
+    "preprod": "mkdir -p dist; NODE_ENV='production' node prod.js",
+    "prod": "babili dist/rangebar.js --no-comments --minified -o dist/rangebar.min.js",
+    "_test": "xo && ava",
+    "test": "xo"
+  },
+  "repository": "nju33/rangebar",
+  "keywords": [
+    "ui",
+    "browser",
+    "commonjs",
+    "es",
+    "range",
+    "input"
+  ],
+  "author": "nju33",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nju33/rangebar/issues"
+  },
+  "homepage": "https://github.com/nju33/rangebar#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "autoprefixer": "^6.5.3",
+    "ava": "^0.17.0",
+    "babel-eslint": "6",
+    "babel-plugin-external-helpers": "^6.18.0",
+    "babel-plugin-transform-class-properties": "^6.19.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^0.0.9",
+    "babili": "^0.0.9",
+    "browser-sync": "^2.18.2",
+    "casual": "^1.5.11",
+    "cssnano": "^3.8.1",
+    "gulp": "^3.9.1",
+    "gulp-less": "^3.3.0",
+    "gulp-postcss": "^6.2.0",
+    "nightmare": "^2.8.1",
+    "postcss-easings": "^0.3.0",
+    "postcss-modules": "^0.5.2",
+    "rollup": "^0.36.4",
+    "rollup-plugin-babel": "^2.6.1",
+    "rollup-plugin-commonjs": "^7.0.0",
+    "rollup-plugin-json": "^2.0.2",
+    "rollup-plugin-node-resolve": "^2.0.0",
+    "rollup-plugin-replace": "^1.1.1",
+    "rollup-plugin-string": "^2.0.2",
+    "rollup-plugin-svelte": "^1.0.0",
+    "xo": "^0.17.1"
+  },
+  "ava": {
+    "files": [
+      "test/specs/*.js"
+    ]
+  },
+  "xo": {
+    "env": [
+      "node",
+      "browser"
+    ],
+    "files": [
+      "example/**/*.js",
+      "src/**/*.js"
+    ],
+    "esnext": true,
+    "space": 2,
+    "ignores": [
+      "es/**"
+    ],
+    "parser": "babel-eslint",
+    "overrides": [
+      {
+        "files": "test/fixtures/*js",
+        "esnext": false,
+        "globals": [
+          "rangebar"
+        ]
+      }
+    ]
+  },
+  "dependencies": {
+    "raf": "^3.3.0"
+  }
+}

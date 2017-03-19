@@ -1,0 +1,241 @@
+{{#if style}}
+  <div ref:bar class="rangebar bar" style="
+    width: {{horizontal ? style.len : style.width}};
+    height: {{horizontal ? style.width : style.len}};
+    background-color: {{style.barBackgroundColor}};
+  ">
+    {{#each buttons as button, idx}}
+      <div class="rangebar button" style="
+        width: {{buttonSize}}px;
+        height: {{buttonSize}}px;
+        background-color: {{style.buttonBackgroundColor}};
+        {{horizontal && `left: ${buttonPositions[idx] - buttonSize / 2}px`}};
+        {{horizontal || `top: ${buttonPositions[idx] - buttonSize / 2}px`}};
+        z-index: {{zIndexes[idx] || 0}};
+      " on:mousedown="handleMousedown(event, idx)"
+      ></div>
+    {{/each}}
+  </div>
+{{/if}}
+
+<style scoped>
+.bar {
+  margin: 1em;
+  position: relative;
+  border-radius: 3px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+
+.button {
+  position: absolute;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+</style>
+
+<script>
+import raf from 'raf';
+
+export default {
+  data() {
+    return {
+      defaultStyle: {
+        len: '8em',
+        width: '4px',
+        barBackgroundColor: '#222',
+        buttonBackgroundColor: '#cb1b45'
+      },
+      horizontal: true,
+      // horizontal: false,
+      min: 0,
+      max: 100,
+      active: null,
+      style: null,
+      buttons: null,
+      zIndex: 0,
+      zIndexes: [],
+      buttonPositions: []
+    };
+  },
+  computed: {
+    buttonSize(style) {
+      if (!(style || {}).width) {
+        return;
+      }
+      const width = getNumber(style.width);
+      return width * 2.414;
+
+      function getNumber(cssVal) {
+        const matches = cssVal.match(/^\d+/);
+        if (matches !== null) {
+          return Number(matches[0]);
+        } else {
+          return null;
+        }
+      }
+    },
+    range(min, max) {
+      if (typeof min !== 'number' && typeof max !== 'number') {
+        return;
+      }
+
+      return max - min;
+    }
+  },
+  methods: {
+    handleMousedown(ev, idx) {
+      ev.preventDefault();
+      const {active} = this.get();
+      if (active !== null) {
+        return;
+      }
+
+      this.set({active: idx});
+    },
+    handleMouseup() {
+      const {active, range, horizontal, buttonPositions, buttonSize,
+             zIndex, zIndexes, onChange} = this.get();
+
+      if (active === null) {
+        return;
+      }
+
+      const barWidth = this.refs.bar[
+        horizontal ? 'clientWidth' : 'clientHeight'
+      ];
+      if (typeof onChange === 'function') {
+        onChange(buttonPositions.map(pos => {
+          const val = Math.round(pos / (barWidth / range));
+          return val;
+        }));
+      }
+
+      const z = zIndex + 1;
+      zIndexes[active] = z;
+      this.set({
+        active: null,
+        zIndexes,
+        zIndex: z
+      });
+    },
+    handleMousemove(ev) {
+      const {active, range, horizontal, buttonPositions} = this.get();
+      if (active === null) {
+        return;
+      }
+
+      const barWidth = this.refs.bar[
+        horizontal ? 'clientWidth' : 'clientHeight'
+      ];
+      const position = buttonPositions[active];
+      const prev = buttonPositions[active - 1] || 0;
+      const next = buttonPositions[active + 1] || barWidth;
+      buttonPositions[active] = (() => {
+        const pos = position + ev[horizontal ? 'movementX' : 'movementY'];
+        if (pos < prev) {
+          return prev;
+        } else if (pos > next) {
+          return next;
+        }
+        return pos;
+      })();
+
+      this.set({buttonPositions});
+    }
+  },
+  oncreate() {
+    const {style, defaultStyle, buttons} = this.get();
+
+    const calcPos = () => {
+      const {bar} = this.refs;
+      const {horizontal, buttons, buttonSize, zIndex} = this.get();
+      const size = bar[horizontal ? 'clientWidth' : 'clientHeight'];
+      const zIndexes = [];
+      const buttonPositions = buttons.map((btn, idx) => {
+        zIndexes.push(zIndex + idx + 1);
+        return size / (100 / btn);
+      });
+      this.set({
+        buttonPositions,
+        zIndexes,
+        zIndex: zIndex + buttons.length
+      });
+    };
+
+    if (!Array.isArray(buttons)) {
+      throw new Error('Required data `buttons`');
+    } else {
+      raf(calcPos);
+    }
+
+    if (style === null) {
+      this.set({style: Object.assign({}, this.defaultStyle)});
+    }
+
+    this.observe('style', newStyle => {
+      const {defaultStyle} = this.get();
+
+      if (typeof newStyle === 'undefined') {
+        this.set({
+          style: defaultStyle
+        });
+        return;
+      }
+
+      if (typeof newStyle !== 'object' ||
+          Array.isArray(newStyle)) {
+        throw new Error('`style` must be Object');
+      }
+
+      this.set({
+        style: Object.assign({}, defaultStyle, newStyle)
+      });
+    });
+
+    this.observe('buttons', buttons => {
+      if (!Array.isArray(buttons)) {
+        throw new Error('`button` must be Array');
+      }
+
+      this.set({buttons});
+      raf(calcPos);
+    });
+
+    document.body.addEventListener(
+      'mouseup',
+      this.handleMouseup.bind(this)
+    );
+    document.body.addEventListener(
+      'mouseleave',
+      this.handleMouseup.bind(this)
+    );
+    document.body.addEventListener(
+      'mousemove',
+      this.handleMousemove.bind(this)
+    );
+  },
+  ondestroy() {
+    document.body.removeEventListener(
+      'mouseup',
+      this.handleMouseup.bind(this)
+    );
+    document.body.removeEventListener(
+      'mouseleave',
+      this.handleMouseup.bind(this)
+    );
+    document.body.removeEventListener(
+      'mousemove',
+      this.handleMousemove.bind(this)
+    );
+  }
+};
+</script>
