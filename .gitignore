@@ -65,5 +65,7 @@ Temporary Items
 
 /dist/**
 !/dist/.gitkeep
+!/dist/rangebar.js
+!/dist/rangebar.min.js
 /lib/style.css*
 /lib/class-name.json

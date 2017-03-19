@@ -21,6 +21,12 @@ Then, download the latest version.
 
 ## Usage
 
+First, if you read as a separate file
+
+```html
+<script src="/path/tp/rangebar.js"></script>
+```
+
 ```js
 import Rangebar from 'rangebar';
 
