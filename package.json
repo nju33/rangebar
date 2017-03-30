@@ -1,6 +1,6 @@
 {
   "name": "rangebar",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "💊 Elements like input[type=range]",
   "main": "dist/rangebar.umd.js",
   "jsnext:main": "dist/rangebar.es.js",
