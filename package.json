@@ -91,7 +91,6 @@
     ]
   },
   "dependencies": {
-    "babel-polyfill": "^6.23.0",
     "raf": "^3.3.0"
   }
 }
