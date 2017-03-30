@@ -1,12 +1,15 @@
 {
   "presets": [
     ["env", {
-      "browsers": ["> 3%", "last 2 versions"],
-      "modules": false
+      "browsers": ["> 3%", "last 9 versions"],
+      "modules": false,
     }]
   ],
   "plugins": [
     "transform-runtime",
+    "external-helpers",
+    "transform-decorators-legacy",
+    "transform-object-rest-spread",
     "transform-class-properties"
   ]
 }
